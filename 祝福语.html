@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <!-- 核心：手机端适配，禁止缩放 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>致妈妈的妇女节祝福</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #fef0f5;
+            font-family: "KaiTi", "SimKai", "Microsoft YaHei", sans-serif;
+            overflow: hidden;
+        }
+
+        /* 花瓣背景动画 */
+        .petal {
+            position: absolute;
+            color: #ffbad2;
+            font-size: 16px;
+            opacity: 0;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-10vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(110vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* 贺卡容器：3D翻页核心 */
+        .card-container {
+            width: 300px;
+            height: 400px;
+            perspective: 1500px; /* 3D透视效果 */
+        }
+
+        .card {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            border-radius: 12px;
+        }
+
+        /* 翻页触发类 */
+        .card.flipped {
+            transform: rotateY(180deg);
+        }
+
+        /* 卡片正反面通用样式 */
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden; /* 隐藏背面 */
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 24px;
+            color: #333;
+        }
+
+        /* 正面样式 */
+        .card-front {
+            background: linear-gradient(135deg, #ffccd5, #ff8fab);
+            color: #fff;
+            text-align: center;
+        }
+
+        .card-front h1 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .open-btn {
+            margin-top: 30px;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            background: #fff;
+            color: #ff8fab;
+            font-family: inherit;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .open-btn:hover {
+            background: #fef0f5;
+            transform: translateY(-2px);
+        }
+
+        /* 背面样式：初始翻转180度，翻页后显示 */
+        .card-back {
+            background: #fff;
+            transform: rotateY(180deg);
+            text-align: left;
+            line-height: 1.8;
+        }
+
+        .card-back h2 {
+            color: #ff6b9e;
+            font-size: 22px;
+            margin-bottom: 15px;
+            text-align: center;
+            border-bottom: 2px solid #ffccd5;
+            padding-bottom: 8px;
+        }
+
+        .card-back p {
+            font-size: 17px;
+            margin-bottom: 12px;
+        }
+
+        .signature {
+            margin-top: 20px;
+            text-align: right;
+            font-size: 16px;
+            color: #ff8fab;
+            font-weight: bold;
+        }
+
+        /* 小屏幕适配（如小手机） */
+        @media (max-width: 320px) {
+            .card-container {
+                width: 260px;
+                height: 350px;
+            }
+
+            .card-front h1 {
+                font-size: 24px;
+            }
+
+            .card-back p {
+                font-size: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 花瓣容器 -->
+    <div id="petals"></div>
+
+    <!-- 贺卡核心 -->
+    <div class="card-container">
+        <div class="card" id="card">
+            <!-- 正面 -->
+            <div class="card-front">
+                <h1>🌸 妇女节快乐 🌸</h1>
+                <p>致我最爱的妈妈</p>
+                <button class="open-btn" id="openBtn">点击打开贺卡</button>
+            </div>
+            <!-- 背面 -->
+            <div class="card-back">
+                <h2>亲爱的妈妈：</h2>
+                <p>今天是属于你的节日，感谢你多年来的付出与陪伴。</p>
+                <p>你不仅是我的妈妈，更是我心中永远的女神！</p>
+                <p>愿你永远健康、快乐，被岁月温柔以待！</p>
+                <div class="signature">
+                    爱你的儿子：吴天龙<br>
+                          2026.03.08
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 1. 翻页功能
+        const openBtn = document.getElementById('openBtn');
+        const card = document.getElementById('card');
+        openBtn.addEventListener('click', () => {
+            card.classList.add('flipped');
+            openBtn.disabled = true; // 防止重复点击
+        });
+
+        // 2. 花瓣飘落动画
+        const petalsContainer = document.getElementById('petals');
+        const petalCount = 20; // 花瓣数量
+        const petalChars = ['🌸', '🌺', '💮']; // 花瓣图标
+
+        for (let i = 0; i < petalCount; i++) {
+            const petal = document.createElement('div');
+            petal.className = 'petal';
+            // 随机选择花瓣图标
+            petal.textContent = petalChars[Math.floor(Math.random() * petalChars.length)];
+            // 随机位置、大小、动画时长
+            petal.style.left = `${Math.random() * 100}vw`;
+            petal.style.fontSize = `${12 + Math.random() * 8}px`;
+            petal.style.animationDuration = `${3 + Math.random() * 7}s`;
+            petal.style.animationDelay = `${Math.random() * 5}s`;
+            petalsContainer.appendChild(petal);
+        }
+    </script>
+</body>
+</html>
